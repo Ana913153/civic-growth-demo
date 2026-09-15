@@ -176,3 +176,32 @@ pnpm install
 pnpm check
 pnpm test -- --run
 ```
+
+## 12. 独立管理后台登录
+
+管理后台不使用普通用户注册账户。后台地址：
+
+```text
+/admin
+```
+
+后台使用独立管理员账号登录。当前已配置的管理员账号为：
+
+```text
+账号：amin6688
+```
+
+密码不会写入 GitHub 代码，只以加盐哈希形式存储在数据库中。登录成功后才能查看订阅邮箱和调整用户虚拟演示积分。
+
+Termux 同步后台版本：
+
+```bash
+cd ~/civic-growth-demo
+git pull origin main
+pnpm install
+pnpm check
+pnpm test -- --run
+pnpm dev --host 0.0.0.0
+```
+
+请勿把管理员密码提交到 GitHub，也不要在公开截图或聊天中重复使用该密码；正式上线前请更换为新的强密码。

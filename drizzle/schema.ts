@@ -1,6 +1,5 @@
 import { boolean, int, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
-/** Core user table backing Manus OAuth and the fictional account center. */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
@@ -23,6 +22,15 @@ export const localAccounts = mysqlTable("local_accounts", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const adminAccounts = mysqlTable("admin_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  username: varchar("username", { length: 64 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 512 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn"),
+});
+
 export const passwordResetRequests = mysqlTable("password_reset_requests", {
   id: int("id").autoincrement().primaryKey(),
   email: varchar("email", { length: 320 }).notNull(),
@@ -42,9 +50,9 @@ export const emailSignups = mysqlTable("email_signups", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
-export type LocalAccount = typeof localAccounts.$inferSelect;
-export type EmailSignup = typeof emailSignups.$inferSelect;
 export type InsertEmailSignup = typeof emailSignups.$inferInsert;
+export type EmailSignup = typeof emailSignups.$inferSelect;
+export type SyntheticMetric = (typeof SYNTHETIC_METRICS)[number];
 
 export const SYNTHETIC_METRICS = [
   { year: "2026", balance: 1000, change: 1000, label: "初始示例" },
@@ -52,5 +60,3 @@ export const SYNTHETIC_METRICS = [
   { year: "2040", balance: 17100, change: 12500, label: "长期预测示例" },
   { year: "2050", balance: 51200, change: 34100, label: "长期示例区间" },
 ];
-
-export type SyntheticMetric = (typeof SYNTHETIC_METRICS)[number];

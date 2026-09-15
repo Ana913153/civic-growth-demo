@@ -5,11 +5,11 @@ import { createEmailSignup, getUserById, listEmailSignups, listUsers, updateUser
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { authenticateEmail, changeEmailPassword, clearEmailSession, createEmailAccount, issueEmailSession, requestPasswordReset } from "./emailAuth";
+import { adminFromRequest, authenticateAdmin, clearAdminSession, issueAdminSession } from "./adminAuth";
 
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== "admin") {
-    throw new TRPCError({ code: "FORBIDDEN", message: "管理员权限 required" });
-  }
+const adminProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const admin = await adminFromRequest(ctx.req);
+  if (!admin) throw new TRPCError({ code: "UNAUTHORIZED", message: "请使用独立管理员账号登录" });
   return next({ ctx });
 });
 
@@ -54,6 +54,22 @@ export const appRouter = router({
     logout: publicProcedure.mutation(({ ctx }) => {
       clearEmailSession(ctx.res, ctx.req);
       return { success: true } as const;
+    }),
+  }),
+
+  adminAuth: router({
+    me: publicProcedure.query(({ ctx }) => adminFromRequest(ctx.req)),
+    login: publicProcedure
+      .input(z.object({ username: z.string().trim().min(3).max(64), password: z.string().min(8).max(128) }))
+      .mutation(async ({ input, ctx }) => {
+        const admin = await authenticateAdmin(input.username, input.password);
+        if (!admin) throw new TRPCError({ code: "UNAUTHORIZED", message: "管理员账号或密码不正确" });
+        await issueAdminSession(ctx.res, ctx.req, admin.id, admin.username);
+        return { ok: true, username: admin.username } as const;
+      }),
+    logout: publicProcedure.mutation(({ ctx }) => {
+      clearAdminSession(ctx.res, ctx.req);
+      return { ok: true } as const;
     }),
   }),
 

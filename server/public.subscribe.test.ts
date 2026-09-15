@@ -42,6 +42,6 @@ describe("admin.overview", () => {
       lastSignedIn: new Date(),
     };
     const caller = appRouter.createCaller(createContext(user));
-    await expect(caller.admin.overview()).rejects.toThrow("管理员权限");
+    await expect(caller.admin.overview()).rejects.toThrow("独立管理员账号");
   });
 });

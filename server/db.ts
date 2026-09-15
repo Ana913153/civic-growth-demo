@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { emailSignups, InsertEmailSignup, InsertUser, localAccounts, passwordResetRequests, users } from "../drizzle/schema";
+import { adminAccounts, emailSignups, InsertEmailSignup, InsertUser, localAccounts, passwordResetRequests, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -127,4 +127,17 @@ export async function createPasswordResetRequest(email: string, tokenHash: strin
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.insert(passwordResetRequests).values({ email, tokenHash, expiresAt });
+}
+
+export async function findAdminByUsername(username: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(adminAccounts).where(eq(adminAccounts.username, username)).limit(1);
+  return result[0];
+}
+
+export async function touchAdminLogin(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(adminAccounts).set({ lastSignedIn: new Date() }).where(eq(adminAccounts.id, id));
 }

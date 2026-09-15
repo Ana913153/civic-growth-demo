@@ -360,3 +360,8 @@ td { border-top: 1px solid #edf1ef; color: #526b78; font-size: 12px; padding: 14
 .account-change-form input:focus { border-color: #b38738; outline: 0; box-shadow: 0 0 0 3px rgba(179,135,56,.12); }
 .account-change-form .account-primary-button { border: 0; border-radius: 2px; margin-top: 3px; }
 @media (max-width: 700px) { .account-password-panel { grid-template-columns: 1fr; padding: 21px; } }
+
+.admin-login-form { display: grid; gap: 11px; margin: 23px auto 18px; max-width: 360px; }
+.admin-login-form input { background: #f8faf7; border: 1px solid #cbd8d1; color: #243b49; font-size: 13px; outline: none; padding: 14px; width: 100%; }
+.admin-login-form input:focus { border-color: #b38738; box-shadow: 0 0 0 3px rgba(179,135,56,.12); }
+.admin-login-form .primary-button { border: 0; border-radius: 2px; width: 100%; }
