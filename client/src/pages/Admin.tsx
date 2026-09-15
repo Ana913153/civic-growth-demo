@@ -7,7 +7,7 @@ import { trpc } from "@/lib/trpc";
 export default function Admin() {
   const admin = trpc.adminAuth.me.useQuery();
   const utils = trpc.useUtils();
-  const login = trpc.adminAuth.login.useMutation({ onSuccess: () => { utils.adminAuth.me.invalidate(); toast.success("管理员登录成功"); }, onError: (error) => toast.error("登录失败", { description: error.message }) });
+  const login = trpc.adminAuth.login.useMutation({ onSuccess: async () => { await utils.adminAuth.me.invalidate(); toast.success("管理员登录成功"); window.location.replace("/admin"); }, onError: (error) => toast.error("登录失败", { description: error.message }) });
   const logout = trpc.adminAuth.logout.useMutation({ onSuccess: () => { utils.adminAuth.me.setData(undefined, null); toast.success("已退出后台"); } });
   const data = trpc.admin.overview.useQuery(undefined, { enabled: Boolean(admin.data) });
   const updateCredits = trpc.admin.setDemoCredits.useMutation({ onSuccess: () => { data.refetch(); toast.success("虚拟积分已更新", { description: "该数字仅用于账户中心演示。" }); }, onError: (error) => toast.error("更新失败", { description: error.message }) });
