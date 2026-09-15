@@ -4,7 +4,7 @@ import { SYNTHETIC_METRICS } from "../drizzle/schema";
 import { createEmailSignup, getUserById, listEmailSignups, listUsers, updateUserDemoCredits } from "./db";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { authenticateEmail, clearEmailSession, createEmailAccount, issueEmailSession } from "./emailAuth";
+import { authenticateEmail, changeEmailPassword, clearEmailSession, createEmailAccount, issueEmailSession, requestPasswordReset } from "./emailAuth";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -37,6 +37,19 @@ export const appRouter = router({
         if (!user) throw new TRPCError({ code: "UNAUTHORIZED", message: "邮箱或密码不正确" });
         await issueEmailSession(ctx.res, ctx.req, user);
         return { ok: true, user: { id: user.id, email: user.email, name: user.name } } as const;
+      }),
+    changePassword: protectedProcedure
+      .input(z.object({ currentPassword: z.string().min(8).max(128), newPassword: z.string().min(8).max(128) }))
+      .mutation(async ({ input, ctx }) => {
+        const changed = await changeEmailPassword(ctx.user.id, input.currentPassword, input.newPassword);
+        if (!changed) throw new TRPCError({ code: "UNAUTHORIZED", message: "当前密码不正确，或该账户不是邮箱密码账户" });
+        return { ok: true } as const;
+      }),
+    requestPasswordReset: publicProcedure
+      .input(z.object({ email: z.string().trim().email().max(320) }))
+      .mutation(async ({ input }) => {
+        await requestPasswordReset(input.email.toLowerCase());
+        return { ok: true, message: "如果该邮箱已注册，系统会在邮件服务配置完成后发送重置说明。" } as const;
       }),
     logout: publicProcedure.mutation(({ ctx }) => {
       clearEmailSession(ctx.res, ctx.req);

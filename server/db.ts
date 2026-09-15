@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { emailSignups, InsertEmailSignup, InsertUser, localAccounts, users } from "../drizzle/schema";
+import { emailSignups, InsertEmailSignup, InsertUser, localAccounts, passwordResetRequests, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -115,4 +115,16 @@ export async function createLocalAccount(input: { openId: string; email: string;
   const userId = Number(result[0].insertId);
   await db.insert(localAccounts).values({ userId, email: input.email, passwordHash: input.passwordHash });
   return getUserById(userId);
+}
+
+export async function updateLocalPassword(userId: number, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(localAccounts).set({ passwordHash }).where(eq(localAccounts.userId, userId));
+}
+
+export async function createPasswordResetRequest(email: string, tokenHash: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.insert(passwordResetRequests).values({ email, tokenHash, expiresAt });
 }

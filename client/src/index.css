@@ -350,3 +350,13 @@ td { border-top: 1px solid #edf1ef; color: #526b78; font-size: 12px; padding: 14
 .account-divider span { font-size: 11px; }
 .account-password-note { color: #899897; font-size: 10px !important; line-height: 1.6 !important; margin: 18px auto 0 !important; max-width: 360px !important; }
 @media (min-width: 701px) { .mobile-header-actions { display: none; } }
+
+.account-forgot-link { background: transparent; border: 0; color: #a77727; font-size: 12px; font-weight: 800; margin: 5px auto 0; }
+.account-password-panel { background: #fff; border: 1px solid #dde6e0; display: grid; gap: 24px; grid-template-columns: .8fr 1.2fr; margin-top: 18px; padding: 26px; }
+.account-password-panel h2 { color: #102d45; font-family: "DM Serif Display", Georgia, serif; font-size: 28px; font-weight: 400; margin: -6px 0 8px; }
+.account-password-panel p:not(.account-kicker) { color: #6b7e83; font-size: 12px; line-height: 1.7; margin: 0; }
+.account-change-form { display: grid; gap: 10px; }
+.account-change-form input { border: 1px solid #cbd8d1; font-size: 12px; padding: 13px; }
+.account-change-form input:focus { border-color: #b38738; outline: 0; box-shadow: 0 0 0 3px rgba(179,135,56,.12); }
+.account-change-form .account-primary-button { border: 0; border-radius: 2px; margin-top: 3px; }
+@media (max-width: 700px) { .account-password-panel { grid-template-columns: 1fr; padding: 21px; } }

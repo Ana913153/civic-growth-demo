@@ -1,12 +1,12 @@
 import { promisify } from "node:util";
-import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
 import { jwtVerify, SignJWT } from "jose";
 import type { Response } from "express";
 import type { User } from "../drizzle/schema";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { ENV } from "./_core/env";
-import { createLocalAccount, findLocalAccountByEmail, getUserById } from "./db";
+import { createLocalAccount, createPasswordResetRequest, findLocalAccountByEmail, getUserById, updateLocalPassword } from "./db";
 
 const scrypt = promisify(scryptCallback);
 export const EMAIL_SESSION_COOKIE = "northstar_email_session";
@@ -45,6 +45,25 @@ export async function authenticateEmail(email: string, password: string) {
   const account = await findLocalAccountByEmail(email);
   if (!account || !(await verifyPassword(password, account.passwordHash))) return null;
   return getUserById(account.userId);
+}
+
+export async function changeEmailPassword(userId: number, currentPassword: string, newPassword: string) {
+  const user = await getUserById(userId);
+  if (!user?.email) return false;
+  const account = await findLocalAccountByEmail(user.email);
+  if (!account || !(await verifyPassword(currentPassword, account.passwordHash))) return false;
+  await updateLocalPassword(userId, await hashPassword(newPassword));
+  return true;
+}
+
+export async function requestPasswordReset(email: string) {
+  const account = await findLocalAccountByEmail(email);
+  if (!account) return;
+  const token = randomBytes(32).toString("hex");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+  await createPasswordResetRequest(email, tokenHash, expiresAt);
+  // The token is intentionally not returned. A configured email provider must deliver it.
 }
 
 export async function issueEmailSession(res: Response, req: Parameters<typeof getSessionCookieOptions>[0], user: User) {
