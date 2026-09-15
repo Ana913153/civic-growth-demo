@@ -54,7 +54,7 @@ export const appRouter = router({
     overview: adminProcedure.query(async () => ({
       signups: await listEmailSignups(),
       syntheticMetrics: SYNTHETIC_METRICS,
-      disclaimer: "Synthetic projection data only — not tied to real people, accounts, or funds.",
+      disclaimer: "仅为合成预测数据，不对应真实个人、账户或资金。",
     })),
   }),
 });

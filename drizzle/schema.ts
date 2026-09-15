@@ -33,10 +33,10 @@ export type InsertEmailSignup = typeof emailSignups.$inferInsert;
  * Public and admin views use clearly labeled synthetic projection data.
  */
 export const SYNTHETIC_METRICS = [
-  { year: "2026", balance: 1000, change: 1000, label: "Opening illustration" },
-  { year: "2030", balance: 4600, change: 3600, label: "Time + contributions" },
-  { year: "2040", balance: 17100, change: 12500, label: "Long-range projection" },
-  { year: "2050", balance: 51200, change: 34100, label: "Illustrative horizon" },
+  { year: "2026", balance: 1000, change: 1000, label: "初始示例" },
+  { year: "2030", balance: 4600, change: 3600, label: "时间 + 持续投入" },
+  { year: "2040", balance: 17100, change: 12500, label: "长期预测示例" },
+  { year: "2050", balance: 51200, change: 34100, label: "长期示例区间" },
 ];
 
 export type SyntheticMetric = (typeof SYNTHETIC_METRICS)[number];
