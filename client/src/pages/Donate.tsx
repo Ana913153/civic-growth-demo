@@ -48,6 +48,7 @@ export default function Donate() {
           </div>
 
           {IS_PLACEHOLDER && <div className="placeholder-warning">当前为占位地址，不要向此地址发送真实资金。</div>}
+          {copied && <div className="copy-success-banner" role="status" aria-live="polite"><span className="copy-success-icon"><Check size={16} /></span><span><strong>地址已复制</strong><small>现在可以粘贴到你的 Bitcoin 钱包中</small></span></div>}
           <label className="address-label">Bitcoin 收款地址</label>
           <div className="address-box"><code>{BITCOIN_ADDRESS}</code><button type="button" className="copy-button" onClick={copyAddress} aria-label="复制比特币地址">{copied ? <Check size={17} /> : <Copy size={17} />}{copied ? "已复制" : "复制"}</button></div>
           <p className="donate-note">捐款完成后，区块链确认可能需要一些时间。我们不会要求你提供私钥、助记词或钱包密码。</p>
