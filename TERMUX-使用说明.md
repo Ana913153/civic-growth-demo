@@ -127,3 +127,36 @@ git push origin main
 ```
 
 请不要在账户中心中加入真实金融余额，也不要将密码、私钥、助记词、数据库密码或 OAuth 密钥提交到 GitHub。
+
+## 10. 邮箱密码注册登录
+
+首页移动端右上角的黄色“注册 / 登录”按钮位于三横线菜单旁边。账户页路径：
+
+```text
+/account
+```
+
+注册时填写邮箱和至少 8 位密码。密码只以加盐哈希形式保存，数据库不保存明文密码。登录后可以查看自己的虚拟演示积分；该数字不可充值、不可提现、不可兑换。
+
+在 Termux 中同步本次更新：
+
+```bash
+cd ~/civic-growth-demo
+git pull origin main
+pnpm install
+pnpm check
+pnpm test -- --run
+pnpm dev --host 0.0.0.0
+```
+
+如果需要把 Termux 中的修改推送到 GitHub：
+
+```bash
+cd ~/civic-growth-demo
+git status
+git add .
+git commit -m "增加邮箱密码注册登录"
+git push origin main
+```
+
+不要提交 `.env`、数据库密码、JWT 密钥、钱包私钥、助记词或 GitHub Token。

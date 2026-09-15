@@ -2,10 +2,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { SYNTHETIC_METRICS } from "../drizzle/schema";
 import { createEmailSignup, getUserById, listEmailSignups, listUsers, updateUserDemoCredits } from "./db";
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { authenticateEmail, clearEmailSession, createEmailAccount, issueEmailSession } from "./emailAuth";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -18,9 +17,29 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
+    registerEmail: publicProcedure
+      .input(z.object({ email: z.string().trim().email().max(320), password: z.string().min(8).max(128), name: z.string().trim().max(80).optional() }))
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const user = await createEmailAccount(input.email.toLowerCase(), input.password, input.name);
+          if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "账户创建失败" });
+          await issueEmailSession(ctx.res, ctx.req, user);
+          return { ok: true, user: { id: user.id, email: user.email, name: user.name } } as const;
+        } catch (error) {
+          if (error instanceof Error && error.message === "该邮箱已经注册") throw new TRPCError({ code: "CONFLICT", message: error.message });
+          throw error;
+        }
+      }),
+    loginEmail: publicProcedure
+      .input(z.object({ email: z.string().trim().email().max(320), password: z.string().min(8).max(128) }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await authenticateEmail(input.email.toLowerCase(), input.password);
+        if (!user) throw new TRPCError({ code: "UNAUTHORIZED", message: "邮箱或密码不正确" });
+        await issueEmailSession(ctx.res, ctx.req, user);
+        return { ok: true, user: { id: user.id, email: user.email, name: user.name } } as const;
+      }),
     logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      clearEmailSession(ctx.res, ctx.req);
       return { success: true } as const;
     }),
   }),

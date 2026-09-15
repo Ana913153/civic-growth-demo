@@ -42,7 +42,7 @@ export default function Home() {
         <nav className="mobile-demo-nav">
           <a href="#story">项目介绍</a><a href="#projection">增长示例</a><Link href="/donate">支持项目</Link><Link href="/account" className="account-nav-link">账户注册 / 登录 <ArrowUpRight size={13} /></Link><Link href="/admin">管理预览</Link>
         </nav>
-        <button className="mobile-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="打开菜单"><Menu size={20} /></button>
+        <div className="mobile-header-actions"><Link href="/account" className="mobile-account-button">注册 / 登录 <ArrowUpRight size={13} /></Link><button className="mobile-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label="打开菜单"><Menu size={20} /></button></div>
       </header>
       {menuOpen && <div className="mobile-demo-menu"><a href="#story" onClick={() => setMenuOpen(false)}>项目介绍</a><a href="#projection" onClick={() => setMenuOpen(false)}>增长示例</a><Link href="/donate">支持项目</Link><Link href="/account">账户注册 / 登录</Link><Link href="/admin">管理预览</Link></div>}
 

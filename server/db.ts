@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { emailSignups, InsertEmailSignup, InsertUser, users } from "../drizzle/schema";
+import { emailSignups, InsertEmailSignup, InsertUser, localAccounts, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -90,4 +90,29 @@ export async function updateUserDemoCredits(id: number, demoCredits: number) {
   if (!db) throw new Error("Database is not available");
   await db.update(users).set({ demoCredits }).where(eq(users.id, id));
   return getUserById(id);
+}
+
+export async function findLocalAccountByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(localAccounts).where(eq(localAccounts.email, email)).limit(1);
+  return result[0];
+}
+
+export async function createLocalAccount(input: { openId: string; email: string; name: string; loginMethod: string; passwordHash: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await findLocalAccountByEmail(input.email);
+  if (existing) throw new Error("该邮箱已经注册");
+  const result = await db.insert(users).values({
+    openId: input.openId,
+    email: input.email,
+    name: input.name,
+    loginMethod: input.loginMethod,
+    role: "user",
+    demoCredits: 0,
+  });
+  const userId = Number(result[0].insertId);
+  await db.insert(localAccounts).values({ userId, email: input.email, passwordHash: input.passwordHash });
+  return getUserById(userId);
 }

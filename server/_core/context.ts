@@ -1,6 +1,7 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
 import { sdk } from "./sdk";
+import { EMAIL_SESSION_COOKIE, userFromEmailSession } from "../emailAuth";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -18,6 +19,10 @@ export async function createContext(
   } catch (error) {
     // Authentication is optional for public procedures.
     user = null;
+  }
+
+  if (!user) {
+    user = (await userFromEmailSession(opts.req.cookies?.[EMAIL_SESSION_COOKIE])) ?? null;
   }
 
   return {

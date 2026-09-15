@@ -1,6 +1,6 @@
 import { boolean, int, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
-/** Core user table backing Manus OAuth. */
+/** Core user table backing Manus OAuth and the fictional account center. */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
@@ -14,6 +14,15 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
+export const localAccounts = mysqlTable("local_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 512 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export const emailSignups = mysqlTable("email_signups", {
   id: int("id").autoincrement().primaryKey(),
   email: varchar("email", { length: 320 }).notNull().unique(),
@@ -24,10 +33,10 @@ export const emailSignups = mysqlTable("email_signups", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+export type LocalAccount = typeof localAccounts.$inferSelect;
 export type EmailSignup = typeof emailSignups.$inferSelect;
 export type InsertEmailSignup = typeof emailSignups.$inferInsert;
 
-/** Public and admin views use clearly labeled synthetic projection data. */
 export const SYNTHETIC_METRICS = [
   { year: "2026", balance: 1000, change: 1000, label: "初始示例" },
   { year: "2030", balance: 4600, change: 3600, label: "时间 + 持续投入" },
