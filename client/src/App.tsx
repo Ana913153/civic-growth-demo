@@ -10,7 +10,7 @@ import Donate from "./pages/Donate";
 import Home from "./pages/Home";
 
 function Router() {
-  return <Switch><Route path="/" component={Home} /><Route path="/account" component={Account} /><Route path="/donate" component={Donate} /><Route path="/admin" component={Admin} /><Route path="/404" component={NotFound} /><Route component={NotFound} /></Switch>;
+  return <Switch><Route path="/" component={Home} /><Route path="/account" component={Account} /><Route path="/donate" component={Donate} /><Route path="/admin/dashboard" component={Admin} /><Route path="/admin" component={Admin} /><Route path="/404" component={NotFound} /><Route component={NotFound} /></Switch>;
 }
 
 export default function App() {
