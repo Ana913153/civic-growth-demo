@@ -53,13 +53,14 @@ export default function Home() {
             <a href="#why">为什么重要</a>
             <a href="#projection">增长示例</a>
             <a href="#answers">常见问题</a>
+            <Link href="/donate" className="nav-admin">比特币支持 <ArrowUpRight size={14} /></Link>
             <Link href="/admin" className="nav-admin">管理预览 <ArrowUpRight size={14} /></Link>
           </nav>
           <button className="rounded-full p-2 md:hidden" onClick={() => setMenuOpen((value) => !value)} aria-label="Toggle menu">
             <Menu size={22} />
           </button>
         </div>
-        {menuOpen && <div className="container flex flex-col gap-4 border-t border-[#d7dfdb] py-5 text-sm font-semibold md:hidden"><a href="#why" onClick={() => setMenuOpen(false)}>为什么重要</a><a href="#projection" onClick={() => setMenuOpen(false)}>增长示例</a><Link href="/admin">管理预览</Link></div>}
+        {menuOpen && <div className="container flex flex-col gap-4 border-t border-[#d7dfdb] py-5 text-sm font-semibold md:hidden"><a href="#why" onClick={() => setMenuOpen(false)}>为什么重要</a><a href="#projection" onClick={() => setMenuOpen(false)}>增长示例</a><Link href="/donate">比特币支持</Link><Link href="/admin">管理预览</Link></div>}
       </header>
 
       <main id="top">
@@ -72,6 +73,7 @@ export default function Home() {
               <div className="hero-actions">
                 <a href="#join" className="primary-button">获取最新动态 <ArrowUpRight size={16} /></a>
                 <a href="#projection" className="text-button">查看增长示例 <ChevronDown size={16} /></a>
+                <Link href="/donate" className="text-button">支持这个项目 <ArrowUpRight size={16} /></Link>
               </div>
               <div className="trust-line"><ShieldCheck size={17} /> 隐私优先 · 经本人同意 · 不连接任何金融账户</div>
             </div>
@@ -115,7 +117,7 @@ export default function Home() {
 
         <section id="answers" className="section-light answers-section"><div className="container answers-grid"><div><p className="eyebrow">常见问题</p><h2>清晰，源于设计。</h2></div><div className="answers-list"><details open><summary>这是政府或金融服务吗？</summary><p>不是。北辰成长计划是一个虚构演示网站，与任何政府、银行、基金或公职人员均无关联。</p></details><details><summary>这些数字是真实的吗？</summary><p>不是。本页面中的余额、数量和预测均为用于展示界面的合成示例数据。</p></details><details><summary>提交订阅后会发生什么？</summary><p>经同意提交的邮箱会存储在项目所有者的管理预览中，你可以随时申请删除。</p></details></div></div></section>
       </main>
-      <footer className="footer"><div className="container footer-inner"><div className="brand-lockup"><span className="brand-mark"><Sparkles size={17} /></span><span><span className="brand-name">北辰成长计划</span><span className="brand-subtitle">虚构演示</span></span></div><p>© 2026 北辰成长计划。仅供演示，与政府无关联。</p><Link href="/admin" className="footer-admin">管理预览 <ArrowUpRight size={14} /></Link></div></footer>
+      <footer className="footer"><div className="container footer-inner"><div className="brand-lockup"><span className="brand-mark"><Sparkles size={17} /></span><span><span className="brand-name">北辰成长计划</span><span className="brand-subtitle">虚构演示</span></span></div><p>© 2026 北辰成长计划。仅供演示，与政府无关联。</p><div className="footer-links"><Link href="/donate" className="footer-admin">比特币支持 <ArrowUpRight size={14} /></Link><Link href="/admin" className="footer-admin">管理预览 <ArrowUpRight size={14} /></Link></div></div></footer>
     </div>
   );
 }
