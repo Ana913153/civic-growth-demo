@@ -1,8 +1,6 @@
 import { boolean, int, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
-/**
- * Core user table backing Manus OAuth.
- */
+/** Core user table backing Manus OAuth. */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
@@ -10,6 +8,7 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: varchar("role", { length: 16 }).default("user").notNull(),
+  demoCredits: int("demoCredits").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -28,10 +27,7 @@ export type InsertUser = typeof users.$inferInsert;
 export type EmailSignup = typeof emailSignups.$inferSelect;
 export type InsertEmailSignup = typeof emailSignups.$inferInsert;
 
-/**
- * This project intentionally does not store or display real account balances.
- * Public and admin views use clearly labeled synthetic projection data.
- */
+/** Public and admin views use clearly labeled synthetic projection data. */
 export const SYNTHETIC_METRICS = [
   { year: "2026", balance: 1000, change: 1000, label: "初始示例" },
   { year: "2030", balance: 4600, change: 3600, label: "时间 + 持续投入" },
