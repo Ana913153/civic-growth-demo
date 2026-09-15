@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <div className="mobile-demo-page">
-      <div className="demo-ribbon">美国政府官方网站</div>
+      <div className="demo-ribbon">虚构演示 · 非政府官方网站 · 数据仅供演示</div>
       <header className="mobile-demo-header">
         <div className="mobile-demo-brand"><span className="mini-flag">✦</span><span>北辰成长计划</span></div>
         <nav className="mobile-demo-nav">
